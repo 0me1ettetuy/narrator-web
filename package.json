@@ -1,0 +1,16 @@
+{
+  "name": "narrator-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --if-present --parallel dev",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.29.2"
+}
