@@ -1,0 +1,31 @@
+// narrator-web.code-workspace
+{
+  "folders": [
+    { "path": "." }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "eslint.workingDirectories": [
+      { "directory": "apps/client", "changeProcessCWD": true },
+      { "directory": "apps/server", "changeProcessCWD": true },
+      { "directory": "packages/trpc", "changeProcessCWD": true }
+    ],
+    "prettier.configPath": "./prettier.config.js",
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint"
+    ]
+  }
+}
