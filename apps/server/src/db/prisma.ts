@@ -1,15 +1,19 @@
 import { PrismaClient } from './generated/prisma/client.js';
 import { PrismaNeon } from '@prisma/adapter-neon';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL;
+const isProd = process.env.DATABASE_ADAPTER === 'neon';
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required');
+}
+
+const adapter = isProd ? new PrismaNeon({ connectionString }) : new PrismaPg({ connectionString });
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is required');
-}
 
 export const prisma =
   globalForPrisma.prisma ??

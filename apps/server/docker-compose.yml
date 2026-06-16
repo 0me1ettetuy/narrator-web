@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: narrator-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: narrator
+      POSTGRES_PASSWORD: narrator
+      POSTGRES_DB: narrator_dev
+    volumes:
+      - narrator_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  narrator_postgres_data:
