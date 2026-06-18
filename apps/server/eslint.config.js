@@ -7,6 +7,11 @@ export default tseslint.config(
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     rules: {
       'no-console': 'off', // servers log
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

@@ -12,7 +12,12 @@
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
+    "@narrator/server": "workspace:*",
     "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/react-query": "^5.101.0",
+    "@tanstack/react-router": "^1.170.16",
+    "@trpc/client": "^11.17.0",
+    "@trpc/tanstack-react-query": "^11.17.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
