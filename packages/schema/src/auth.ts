@@ -8,3 +8,6 @@ export const credentialsSchema = z.object({
 export const refreshTokenSchema = z.object({
   refreshToken: z.string().min(32),
 });
+
+export type CredentialsSchemaType = z.infer<typeof credentialsSchema>;
+export type RefreshTokenSchemaType = z.infer<typeof refreshTokenSchema>;

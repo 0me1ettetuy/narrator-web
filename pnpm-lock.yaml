@@ -20,6 +20,9 @@ importers:
       '@fontsource-variable/geist':
         specifier: ^5.2.9
         version: 5.2.9
+      '@narrator/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@narrator/server':
         specifier: workspace:*
         version: link:../server
@@ -129,6 +132,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@narrator/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@neondatabase/serverless':
         specifier: ^1.1.0
         version: 1.1.0
@@ -199,6 +205,16 @@ importers:
       typescript-eslint:
         specifier: ^8.60.0
         version: 8.60.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3)
+
+  packages/schema:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
 
 packages:
 

@@ -1,4 +1,4 @@
-import { credentialsSchema, refreshTokenSchema } from '@/auth/auth.schema.js';
+import { credentialsSchema, refreshTokenSchema } from '@narrator/schema';
 import { hashPassword, verifyPassword } from '@/auth/password.js';
 import {
   createAccessToken,

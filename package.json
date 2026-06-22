@@ -11,7 +11,8 @@
     "lint": "pnpm -r --if-present lint",
     "lint:fix": "pnpm -r --if-present lint:fix",
     "format": "prettier --check \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
-    "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore"
+    "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
+    "predev": "pnpm --filter @narrator/schema build"
   },
   "keywords": [],
   "author": "",
