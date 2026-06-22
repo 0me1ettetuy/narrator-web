@@ -1,6 +1,1 @@
-export {
-  credentialsSchema,
-  refreshTokenSchema,
-  type CredentialsSchemaType,
-  type RefreshTokenSchemaType,
-} from './auth.js';
+export { credentialsSchema, type CredentialsSchemaType } from './auth.js';

@@ -1,5 +1,5 @@
-import { router, publicProcedure } from '@/config/trpc.config.js';
-import { authRouter } from './auth.router.js';
+import { router, publicProcedure } from '@/trpc/trpc.config.js';
+import { authRouter } from '../modules/auth/auth.router.js';
 
 export const appRouter = router({
   health: router({

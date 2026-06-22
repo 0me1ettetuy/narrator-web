@@ -1,10 +1,21 @@
 import express, { type Express } from 'express';
 import { prisma } from '@/db/prisma.js';
-import { trpcMiddleware } from '@/middleware/trpc.middleware.js';
+import { trpcMiddleware } from '@/trpc/trpc.middleware.js';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app: Express = express();
 
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use('/trpc', trpcMiddleware);
 

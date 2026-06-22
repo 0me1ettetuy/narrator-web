@@ -6,7 +6,17 @@ import type { AppRouter } from '@narrator/server/api';
 const url = import.meta.env.VITE_BACKEND_URL;
 
 const trpcClient = createTRPCClient<AppRouter>({
-  links: [httpBatchLink({ url })],
+  links: [
+    httpBatchLink({
+      url,
+      fetch(input, init) {
+        return fetch(input, {
+          ...init,
+          credentials: 'include',
+        });
+      },
+    }),
+  ],
 });
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({ client: trpcClient, queryClient });
