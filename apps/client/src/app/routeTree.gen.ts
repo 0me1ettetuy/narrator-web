@@ -9,50 +9,135 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthorizedRouteImport } from './routes/_authorized'
+import { Route as AuthorizedIndexRouteImport } from './routes/_authorized/index'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthorizedHomeRouteImport } from './routes/_authorized/home'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthorizedRoute = AuthorizedRouteImport.update({
+  id: '/_authorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorizedIndexRoute = AuthorizedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthorizedRoute,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorizedHomeRoute = AuthorizedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthorizedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthorizedIndexRoute
+  '/home': typeof AuthorizedHomeRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/home': typeof AuthorizedHomeRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/': typeof AuthorizedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authorized': typeof AuthorizedRouteWithChildren
+  '/_authorized/home': typeof AuthorizedHomeRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/_authorized/': typeof AuthorizedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/home' | '/auth/login' | '/auth/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/home' | '/auth/login' | '/auth/register' | '/'
+  id:
+    | '__root__'
+    | '/_authorized'
+    | '/_authorized/home'
+    | '/auth/login'
+    | '/auth/register'
+    | '/_authorized/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthorizedRoute: typeof AuthorizedRouteWithChildren
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authorized': {
+      id: '/_authorized'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authorized/': {
+      id: '/_authorized/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthorizedIndexRouteImport
+      parentRoute: typeof AuthorizedRoute
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authorized/home': {
+      id: '/_authorized/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthorizedHomeRouteImport
+      parentRoute: typeof AuthorizedRoute
     }
   }
 }
 
+interface AuthorizedRouteChildren {
+  AuthorizedHomeRoute: typeof AuthorizedHomeRoute
+  AuthorizedIndexRoute: typeof AuthorizedIndexRoute
+}
+
+const AuthorizedRouteChildren: AuthorizedRouteChildren = {
+  AuthorizedHomeRoute: AuthorizedHomeRoute,
+  AuthorizedIndexRoute: AuthorizedIndexRoute,
+}
+
+const AuthorizedRouteWithChildren = AuthorizedRoute._addFileChildren(
+  AuthorizedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthorizedRoute: AuthorizedRouteWithChildren,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
