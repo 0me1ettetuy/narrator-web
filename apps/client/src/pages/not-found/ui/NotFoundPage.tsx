@@ -1,5 +1,5 @@
 import { Button } from "@/shared/components/ui/button";
 
 export function NotFoundPage() {
-  return <><div>Page not found,</div> <Button>return</Button></>
+  return <main className="flex flex-1 justify-center items-center">not found</main>
 }

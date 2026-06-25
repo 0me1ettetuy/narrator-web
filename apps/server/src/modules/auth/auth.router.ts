@@ -1,5 +1,5 @@
 import { credentialsSchema } from '@narrator/schema';
-import { publicProcedure, router } from '@/trpc/trpc.config.js';
+import { protectedProcedure, publicProcedure, router } from '@/trpc/trpc.config.js';
 import { TRPCError } from '@trpc/server';
 import {
   EmailAlreadyRegisteredError,
@@ -94,7 +94,7 @@ export const authRouter = router({
     return { success: true };
   }),
 
-  me: publicProcedure.query(({ ctx }) => {
+  me: protectedProcedure.query(({ ctx }) => {
     return { user: ctx.user };
   }),
 });
