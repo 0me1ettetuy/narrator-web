@@ -16,8 +16,12 @@ export function AuthenticatedLayout() {
     }
   }, [me.isSuccess, me.data, navigate]);
 
-  return (<div className='flex flex-col'>
-  <Header />
-  <main className='flex-1'><Outlet /></main>
-  </div>);
+  return (
+    <div className="flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
+  );
 }

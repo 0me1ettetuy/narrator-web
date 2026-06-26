@@ -5,12 +5,14 @@ import { routeTree } from '@/app/routeTree.gen';
 import '@/app/styles/index.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/shared/api/query-client';
+import { GlobalLoader } from '@/pages/loader';
 
 const router = createRouter({
   routeTree,
   context: { queryClient },
   defaultPreload: 'intent',
-  defaultPreloadStaleTime: 0,
+  defaultPreloadStaleTime: 30_000,
+  defaultPendingComponent: GlobalLoader,
   scrollRestoration: true,
 });
 

@@ -96,7 +96,7 @@ const authLink: TRPCLink<AppRouter> = () => {
   };
 };
 
-const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     authLink,
     httpBatchLink({
