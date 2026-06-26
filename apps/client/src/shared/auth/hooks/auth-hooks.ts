@@ -2,7 +2,7 @@ import { trpc, trpcClient } from '@/shared/api/trpc';
 import { useQuery, useMutation, queryOptions } from '@tanstack/react-query';
 import { clearAccessToken } from '@/shared/auth/utils/access-token';
 import { queryClient } from '@/shared/api/query-client';
-import { TRPCClientError } from '@trpc/client';
+import { isUnauthorized } from '@/shared/api/is-unauthorized';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from '@narrator/server/api';
 
@@ -18,7 +18,7 @@ export const meQueryOptions = () =>
       try {
         return await trpcClient.auth.me.query();
       } catch (error) {
-        if (error instanceof TRPCClientError && error.data?.code === 'UNAUTHORIZED') {
+        if (isUnauthorized(error)) {
           return { user: null };
         }
         throw error;

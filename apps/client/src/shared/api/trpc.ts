@@ -1,5 +1,6 @@
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { queryClient } from '@/shared/api/query-client';
+import { isUnauthorized } from '@/shared/api/is-unauthorized';
 import { createTRPCClient, httpBatchLink, type TRPCClientError, type TRPCLink } from '@trpc/client';
 import type { AppRouter } from '@narrator/server/api';
 import { clearAccessToken, getAccessToken, setAccessToken } from '@/shared/auth';
@@ -23,8 +24,6 @@ const refreshClient = createTRPCClient<AppRouter>({
 });
 
 let refreshPromise: ReturnType<typeof refreshClient.auth.refresh.mutate> | null = null;
-
-const isUnauthorized = (error: TRPCClientError<AppRouter>) => error.data?.code === 'UNAUTHORIZED';
 
 const REFRESH_BLOCKLIST = new Set(['auth.login', 'auth.register', 'auth.refresh', 'auth.logout']);
 
