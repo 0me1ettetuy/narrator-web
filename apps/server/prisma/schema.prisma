@@ -21,8 +21,14 @@ model RefreshToken {
   id String @id @default(cuid())
   token String @unique
   userId String
+  familyId String
   expiresAt DateTime
+  rotatedAt DateTime?
+  replacedById String? @unique
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@index([userId])
 }

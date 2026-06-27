@@ -5,7 +5,9 @@ import { hashPassword, verifyPassword } from './password.js';
 import {
   createAccessToken,
   createRefreshToken,
+  createTokenFamilyId,
   getRefreshTokenExpiresAt,
+  getRotationGraceMs,
   hashRefreshToken,
 } from './tokens.js';
 import type { AuthUser, AuthSession } from './auth.types.js';
@@ -23,6 +25,7 @@ const createAuthSession = async (user: AuthUser) => {
     data: {
       token: hashRefreshToken(refreshToken),
       userId: user.id,
+      familyId: createTokenFamilyId(),
       expiresAt: getRefreshTokenExpiresAt(),
     },
   });
@@ -93,10 +96,8 @@ export const register = async (input: CredentialsSchemaType): Promise<AuthSessio
 };
 
 export const refresh = async (refreshToken: string): Promise<AuthSession> => {
-  const currentRefreshTokenHash = hashRefreshToken(refreshToken);
-
   const storedRefreshToken = await prisma.refreshToken.findUnique({
-    where: { token: currentRefreshTokenHash },
+    where: { token: hashRefreshToken(refreshToken) },
     include: {
       user: {
         select: {
@@ -107,40 +108,42 @@ export const refresh = async (refreshToken: string): Promise<AuthSession> => {
     },
   });
 
-  if (!storedRefreshToken) {
+  if (!storedRefreshToken || storedRefreshToken.expiresAt <= new Date()) {
     throw new InvalidRefreshTokenError();
   }
 
-  if (storedRefreshToken.expiresAt <= new Date()) {
-    await prisma.refreshToken.deleteMany({
-      where: { id: storedRefreshToken.id },
-    });
+  if (storedRefreshToken.rotatedAt) {
+    const withinGraceWindow =
+      Date.now() - storedRefreshToken.rotatedAt.getTime() <= getRotationGraceMs();
 
-    throw new InvalidRefreshTokenError();
+    if (!withinGraceWindow) {
+      await prisma.refreshToken.deleteMany({
+        where: { familyId: storedRefreshToken.familyId },
+      });
+
+      throw new InvalidRefreshTokenError();
+    }
   }
 
   const nextRefreshToken = createRefreshToken();
 
-  try {
-    await prisma.$transaction([
-      prisma.refreshToken.delete({
-        where: { id: storedRefreshToken.id },
-      }),
-      prisma.refreshToken.create({
-        data: {
-          token: hashRefreshToken(nextRefreshToken),
-          userId: storedRefreshToken.userId,
-          expiresAt: getRefreshTokenExpiresAt(),
-        },
-      }),
-    ]);
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      throw new InvalidRefreshTokenError();
-    }
+  await prisma.$transaction(async (tx) => {
+    const created = await tx.refreshToken.create({
+      data: {
+        token: hashRefreshToken(nextRefreshToken),
+        userId: storedRefreshToken.userId,
+        familyId: storedRefreshToken.familyId,
+        expiresAt: getRefreshTokenExpiresAt(),
+      },
+    });
 
-    throw error;
-  }
+    if (!storedRefreshToken.rotatedAt) {
+      await tx.refreshToken.update({
+        where: { id: storedRefreshToken.id },
+        data: { rotatedAt: new Date(), replacedById: created.id },
+      });
+    }
+  });
 
   const accessToken = await createAccessToken({
     sub: storedRefreshToken.user.id,
@@ -151,7 +154,14 @@ export const refresh = async (refreshToken: string): Promise<AuthSession> => {
 };
 
 export const logout = async (refreshToken: string): Promise<void> => {
-  await prisma.refreshToken.deleteMany({
+  const storedRefreshToken = await prisma.refreshToken.findUnique({
     where: { token: hashRefreshToken(refreshToken) },
+    select: { familyId: true },
+  });
+
+  if (!storedRefreshToken) return;
+
+  await prisma.refreshToken.deleteMany({
+    where: { familyId: storedRefreshToken.familyId },
   });
 };

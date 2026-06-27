@@ -3,6 +3,7 @@ import { SignJWT, jwtVerify } from 'jose';
 
 const DEFAULT_ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
 const DEFAULT_REFRESH_TOKEN_TTL_DAYS = 30;
+const REFRESH_TOKEN_ROTATION_GRACE_SECONDS = 10;
 
 type AccessTokenPayload = {
   sub: string;
@@ -49,7 +50,7 @@ export const createAccessToken = async (payload: AccessTokenPayload) => {
 };
 
 export const verifyAccessToken = async (token: string) => {
-  const { payload } = await jwtVerify(token, getJwtSecret());
+  const { payload } = await jwtVerify(token, getJwtSecret(), { algorithms: ['HS256'] });
 
   if (!payload.sub || typeof payload.email !== 'string') {
     throw new Error('Invalid access token payload');
@@ -60,6 +61,10 @@ export const verifyAccessToken = async (token: string) => {
     email: payload.email,
   };
 };
+
+export const createTokenFamilyId = () => crypto.randomUUID();
+
+export const getRotationGraceMs = () => REFRESH_TOKEN_ROTATION_GRACE_SECONDS * 1000;
 
 export const createRefreshToken = () => {
   return crypto.randomBytes(48).toString('base64url');
