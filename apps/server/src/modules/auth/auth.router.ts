@@ -42,7 +42,7 @@ export const authRouter = router({
 
       return { user: session.user, accessToken: session.accessToken };
     } catch (error) {
-      throwAuthError(error);
+      return throwAuthError(error);
     }
   }),
 
@@ -57,7 +57,7 @@ export const authRouter = router({
         accessToken: session.accessToken,
       };
     } catch (error) {
-      throwAuthError(error);
+      return throwAuthError(error);
     }
   }),
 
@@ -78,7 +78,7 @@ export const authRouter = router({
         accessToken: session.accessToken,
       };
     } catch (error) {
-      throwAuthError(error);
+      return throwAuthError(error);
     }
   }),
 

@@ -1,3 +1,3 @@
 export function RegisterPage() {
-  return <div>RegisterPage</div>;
+  return <div className="max-w-7xl mx-auto py-4">RegisterPage</div>;
 }

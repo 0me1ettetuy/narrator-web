@@ -76,7 +76,9 @@ const authLink: TRPCLink<AppRouter> = () => {
 
             const meQueryKey = trpc.auth.me.queryKey();
 
-            await queryClient.cancelQueries({ queryKey: meQueryKey });
+            if (op.path !== 'auth.me') {
+              await queryClient.cancelQueries({ queryKey: meQueryKey });          
+            }
             queryClient.setQueryData(meQueryKey, { user: null });
 
             if (isActive) {

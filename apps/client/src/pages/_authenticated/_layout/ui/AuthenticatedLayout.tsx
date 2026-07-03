@@ -17,7 +17,7 @@ export function AuthenticatedLayout() {
   }, [me.isSuccess, me.data, navigate]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen overflow-auto">
       <Header />
       <main className="flex-1">
         <Outlet />
