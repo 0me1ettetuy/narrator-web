@@ -2,11 +2,18 @@ import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { queryClient } from '@/shared/api/query-client';
 import { isUnauthorized } from '@/shared/api/is-unauthorized';
 import { createTRPCClient, httpBatchLink, type TRPCClientError, type TRPCLink } from '@trpc/client';
+import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from '@narrator/server/api';
 import { clearAccessToken, getAccessToken, setAccessToken } from '@/shared/auth';
 import { observable } from '@trpc/server/observable';
 
 const url = import.meta.env.VITE_BACKEND_URL;
+
+type AuthUser = inferRouterOutputs<AppRouter>['auth']['me']['user'];
+
+type MeQueryData = {
+  user: AuthUser | null;
+};
 
 const fetchWithCredentials: typeof fetch = (input, init) =>
   fetch(input, {
@@ -79,7 +86,7 @@ const authLink: TRPCLink<AppRouter> = () => {
             if (op.path !== 'auth.me') {
               await queryClient.cancelQueries({ queryKey: meQueryKey });          
             }
-            queryClient.setQueryData(meQueryKey, { user: null });
+            queryClient.setQueryData<MeQueryData>(meQueryKey, { user: null });
 
             if (isActive) {
               observer.error(error);
