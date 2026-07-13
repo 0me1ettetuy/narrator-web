@@ -1,6 +1,7 @@
 {
   "name": "@narrator/server",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,8 +13,10 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "concurrently --kill-others --names server,types,aliases \"tsx watch src/index.ts\" \"tsc --watch --preserveWatchOutput\" \"tsc-alias --watch\"",
+    "prebuild": "prisma generate",
     "build": "tsc && tsc-alias",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -28,7 +31,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.29.2",
   "dependencies": {
     "@narrator/schema": "workspace:*",
     "@neondatabase/serverless": "^1.1.0",
@@ -36,29 +38,28 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@prisma/client-runtime-utils": "^7.8.0",
-    "@trpc/server": "^11.17.0",
+    "@trpc/server": "catalog:",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jose": "^6.2.3",
-    "pg": "^8.21.0",
-    "zod": "^4.4.3"
+    "pg": "^8.21.0"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "catalog:",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
-    "eslint": "^10.4.1",
-    "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.8.3",
+    "concurrently": "^10.0.3",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
     "prisma": "^7.8.0",
     "tsc-alias": "^1.8.17",
     "tsx": "^4.22.3",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0"
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

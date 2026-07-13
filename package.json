@@ -8,18 +8,19 @@
   "scripts": {
     "dev": "pnpm -r --if-present --parallel dev",
     "build": "pnpm -r --if-present build",
+    "pretypecheck": "pnpm --filter @narrator/server... build",
+    "typecheck": "pnpm -r --if-present typecheck",
     "lint": "pnpm -r --if-present lint",
     "lint:fix": "pnpm -r --if-present lint:fix",
     "format": "prettier --check \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
     "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
-    "predev": "pnpm --filter @narrator/schema build"
+    "predev": "pnpm --filter @narrator/server... build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.29.2",
   "devDependencies": {
-    "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.3"
   }
 }

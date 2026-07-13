@@ -4,7 +4,7 @@ services:
     container_name: narrator-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_USER: narrator
       POSTGRES_PASSWORD: narrator
