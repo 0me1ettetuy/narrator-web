@@ -17,8 +17,6 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use('/trpc', trpcMiddleware);
-
 app.get('/health', async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
@@ -27,5 +25,7 @@ app.get('/health', async (_req, res) => {
     res.status(503).json({ status: 'db_unreachable' });
   }
 });
+
+app.use('/', trpcMiddleware);
 
 export { app };

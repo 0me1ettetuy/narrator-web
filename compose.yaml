@@ -1,27 +1,22 @@
-name: narrator-web
+name: narrator-web-${ENVIRONMENT:-development}
 
 services:
   db:
     image: postgres:16-alpine
-    ports:
-    - "5432:5432"
-
-  server:
-    image: narrator-server
-    build:
-      context: .
-      dockerfile: /apps/server/Dockerfile
-    ports:
-    - "3000:3000"
-    depends_on:
-      - db
-  
-  client:
-    image: narrator-client
-    build:
-      context: .
-      dockerfile: /apps/client/Dockerfile
-    ports:
-      - "5173:5173"
+    restart: unless-stopped
     environment:
-      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
+    ports:
+      - '${POSTGRES_PUBLISHED_PORT:-5432}:5432'
+    volumes:
+      - narrator_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  narrator_postgres_data:

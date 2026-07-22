@@ -2,6 +2,11 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
+ARG DATABASE_URL_DIRECT
+ARG VITE_BACKEND_URL
+ENV DATABASE_URL_DIRECT=$DATABASE_URL_DIRECT
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY ./apps/client/package.json ./apps/client/
 COPY ./apps/server/package.json ./apps/server/
@@ -12,13 +17,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-ENV DATABASE_URL_DIRECT="postgresql://user:password@localhost:5432/narrator"
-
 RUN pnpm --filter @narrator/schema build
 RUN pnpm --filter @narrator/server build
-
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
 RUN pnpm --filter @narrator/client build
 

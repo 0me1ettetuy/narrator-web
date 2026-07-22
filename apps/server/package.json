@@ -13,8 +13,8 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "concurrently --kill-others --names server,types,aliases \"tsx watch src/index.ts\" \"tsc --watch --preserveWatchOutput\" \"tsc-alias --watch\"",
-    "prebuild": "prisma generate",
+    "dev": "concurrently --kill-others --names server,types,aliases \"DOTENV_CONFIG_PATH=../../.env tsx watch src/index.ts\" \"tsc --watch --preserveWatchOutput\" \"tsc-alias --watch\"",
+    "prebuild": "DOTENV_CONFIG_PATH=../../.env prisma generate",
     "build": "tsc && tsc-alias",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
@@ -23,10 +23,10 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset"
+    "db:migrate": "DOTENV_CONFIG_PATH=../../.env prisma migrate dev",
+    "db:generate": "DOTENV_CONFIG_PATH=../../.env prisma generate",
+    "db:seed": "DOTENV_CONFIG_PATH=../../.env tsx prisma/seed.ts",
+    "db:reset": "DOTENV_CONFIG_PATH=../../.env prisma migrate reset"
   },
   "keywords": [],
   "author": "",

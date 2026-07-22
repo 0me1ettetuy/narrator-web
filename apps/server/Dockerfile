@@ -2,6 +2,9 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
+ARG DATABASE_URL_DIRECT
+ENV DATABASE_URL_DIRECT=$DATABASE_URL_DIRECT
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/schema/package.json packages/schema/
 COPY apps/server/package.json apps/server/
