@@ -66,6 +66,21 @@ services:
     depends_on:
       server:
         condition: service_healthy
+  
+  kokoro-tts:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    # image: ghcr.io/remsky/kokoro-fastapi-gpu:latest
+    container_name: kokoro-tts
+    restart: unless-stopped
+    ports:
+      - "8880:8880"
+    # deploy:
+    #   resources:
+    #     reservation:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
 
 volumes:
   narrator_postgres_data:
