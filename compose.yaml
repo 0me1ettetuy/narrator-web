@@ -33,14 +33,14 @@ services:
     #           count: all
     #           capabilities: [gpu]
 
-  piper-tts:
-    image: arkdevuk/webpiper:latest
-    container_name: piper-tts
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./output:/output
-    restart: unless-stopped
+  # piper-tts:
+  #   image: arkdevuk/webpiper:latest
+  #   container_name: piper-tts
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./output:/output
+  #   restart: unless-stopped
 
 volumes:
   narrator_postgres_data:

@@ -15,6 +15,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   refreshTokens RefreshToken[]
+  books Book[]
 }
 
 model RefreshToken {
@@ -31,4 +32,39 @@ model RefreshToken {
 
   @@index([familyId])
   @@index([userId])
+}
+
+model Book {
+  id String @id @default(cuid())
+  title String
+  author String
+  userId String
+  epubR2Key String
+  filename String?
+  parseStatus String @default("pending")
+  parseError String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapters Chapter[]
+
+  @@index([userId])
+}
+
+model Chapter {
+  id String @id @default(cuid())
+  title String
+  index Int
+  text String
+  bookId String
+
+  audioStatus String @default("none")
+  audioR2Key String?
+  audioError String?
+  
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  
+  @@unique([bookId, index])
+  @@index([bookId])
 }

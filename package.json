@@ -12,6 +12,10 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "pnpm -r --if-present lint",
     "lint:fix": "pnpm -r --if-present lint:fix",
+    "db:migrate": "pnpm --filter @narrator/server db:migrate",
+    "db:generate": "pnpm --filter @narrator/server db:generate",
+    "db:seed": "pnpm --filter @narrator/server db:seed",
+    "db:reset": "pnpm --filter @narrator/server db:reset",
     "format": "prettier --check \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
     "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md,css,html,yml,yaml}\" --ignore-path .prettierignore",
     "predev": "pnpm --filter @narrator/server... build"
