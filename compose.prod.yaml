@@ -85,29 +85,36 @@ services:
       server:
         condition: service_healthy
   
-  kokoro-tts:
-    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
-    # image: ghcr.io/remsky/kokoro-fastapi-gpu:latest
-    container_name: kokoro-tts
-    restart: unless-stopped
-    ports:
-      - "8880:8880"
-    # deploy:
-    #   resources:
-    #     reservation:
-    #       devices:
-    #         - driver: nvidia
-    #           count: all
-    #           capabilities: [gpu]
+  # kokoro-tts:
+  #   image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+  #   container_name: kokoro-tts
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8880:8880"
 
-  piper-tts:
-    image: arkdevuk/webpiper:latest
-    container_name: piper-tts
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./output:/output
-    restart: unless-stopped
+  # kokoro-tts:
+  #   image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+  #   image: ghcr.io/remsky/kokoro-fastapi-gpu:latest
+  #   container_name: kokoro-tts
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8880:8880"
+  #   deploy:
+  #     resources:
+  #       reservation:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities: [gpu]
+
+  # piper-tts:
+  #   image: arkdevuk/webpiper:latest
+  #   container_name: piper-tts
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./output:/output
+  #   restart: unless-stopped
 
 volumes:
   narrator_postgres_data:
