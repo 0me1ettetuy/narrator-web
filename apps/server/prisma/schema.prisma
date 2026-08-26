@@ -1,70 +1,109 @@
+
 datasource db {
   provider = "postgresql"
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../src/db/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../src/db/generated/prisma"
 }
 
 model User {
-  id  String  @id @default(cuid())
-  email String @unique
-  passwordHash String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  refreshTokens RefreshToken[]
-  books Book[]
-}
+  books         Book[]
+  name          String
+  emailVerified Boolean        @default(false)
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
 
-model RefreshToken {
-  id String @id @default(cuid())
-  token String @unique
-  userId String
-  familyId String
-  expiresAt DateTime
-  rotatedAt DateTime?
-  replacedById String? @unique
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([familyId])
-  @@index([userId])
+  @@map("user")
 }
 
 model Book {
-  id String @id @default(cuid())
-  title String
-  author String
-  userId String
-  epubR2Key String
-  filename String?
-  parseStatus String @default("pending")
-  parseError String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  userId      String
+  epubR2Key   String
+  filename    String?
+  parseStatus String   @default("pending")
+  parseError  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapters Chapter[]
 
   @@index([userId])
 }
 
 model Chapter {
-  id String @id @default(cuid())
-  title String
-  index Int
-  text String
+  id     String @id @default(cuid())
+  title  String
+  index  Int
+  text   String
   bookId String
 
-  audioStatus String @default("none")
-  audioR2Key String?
-  audioError String?
-  
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  
+  audioStatus String  @default("none")
+  audioR2Key  String?
+  audioError  String?
+  book        Book    @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
   @@unique([bookId, index])
   @@index([bookId])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  issuer                String
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([issuer, accountId], map: "account_issuer_accountId_uidx")
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

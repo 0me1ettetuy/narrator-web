@@ -3,6 +3,8 @@ import { prisma } from '@/db/prisma.js';
 import { trpcMiddleware } from '@/trpc/trpc.middleware.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './utils/auth.js';
 
 const app: Express = express();
 
@@ -12,6 +14,8 @@ app.use(
     credentials: true,
   }),
 );
+
+app.all('/api/auth/{*any}', toNodeHandler(auth));
 
 app.use(express.json());
 

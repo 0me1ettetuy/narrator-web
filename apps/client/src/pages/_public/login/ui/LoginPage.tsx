@@ -21,7 +21,7 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { Separator } from '@/shared/components/ui/separator';
 import { useLogin } from '@/shared/auth/hooks/auth-hooks';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Route } from '@/app/routes/_public/login';
 
 const LoginFormSchema = credentialsSchema;
@@ -38,6 +38,7 @@ export function LoginPage() {
   });
   const login = useLogin();
   const navigate = useNavigate();
+  const router = useRouter();
   const { redirect } = Route.useSearch();
 
   const onSubmit = async (data: LoginFormType) => {
@@ -45,6 +46,7 @@ export function LoginPage() {
 
     try {
       await login.mutateAsync(data);
+      await router.invalidate();
 
       toast('Welcome sir!', {
         description: `Signed in as ${data.email}`,

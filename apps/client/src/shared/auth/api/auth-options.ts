@@ -1,51 +1,43 @@
-import { clearAccessToken, setAccessToken } from '@/shared/auth/utils/access-token';
+import { authClient } from '@/shared/lib/auth-client';
 import { queryClient } from '@/shared/api/query-client';
-import { isUnauthorized } from '@/shared/api/is-unauthorized';
-import { trpc, trpcClient } from '@/shared/api/trpc';
 import { queryOptions } from '@tanstack/react-query';
-import type { inferRouterOutputs } from '@trpc/server';
-import type { AppRouter } from '@narrator/server/api';
 
-export type AuthUser = inferRouterOutputs<AppRouter>['auth']['me']['user'];
-export type AuthSession = inferRouterOutputs<AppRouter>['auth']['login'];
+export const authSessionQueryKey = ['auth', 'session'] as const;
 
-type MeQueryData = {
-  user: AuthUser | null;
+const getSessionQueryData = async () => {
+  const { data } = await authClient.getSession();
+  return { user: data?.user ?? null };
 };
 
-const setAuthSession = (session: AuthSession) => {
-  setAccessToken(session.accessToken);
-  queryClient.setQueryData<MeQueryData>(trpc.auth.me.queryKey(), { user: session.user });
+const refreshSessionQuery = async () => {
+  const session = await getSessionQueryData();
+  queryClient.setQueryData(authSessionQueryKey, session);
+  return session;
 };
 
 export const meQueryOptions = queryOptions({
-  queryKey: trpc.auth.me.queryKey(),
-  staleTime: 5 * 60 * 1000,
-  queryFn: async (): Promise<MeQueryData> => {
-    try {
-      return await trpcClient.auth.me.query();
-    } catch (error) {
-      if (isUnauthorized(error)) {
-        return { user: null };
-      }
-      throw error;
-    }
-  },
+  queryKey: authSessionQueryKey,
+  queryFn: getSessionQueryData,
 });
 
-export const loginMutationOptions = trpc.auth.login.mutationOptions({
-  onSuccess: setAuthSession,
-});
+export const login = async (input: { email: string; password: string }) => {
+  const { error } = await authClient.signIn.email(input);
+  if (error) throw new Error(error.message);
+  await refreshSessionQuery();
+};
 
-export const registerMutationOptions = trpc.auth.register.mutationOptions({
-  onSuccess: setAuthSession,
-});
+export const register = async (input: { email: string; password: string }) => {
+  const { error } = await authClient.signUp.email({
+    email: input.email,
+    password: input.password,
+    name: input.email,
+  });
+  if (error) throw new Error(error.message);
+  await refreshSessionQuery();
+};
 
-export const refreshMutationOptions = trpc.auth.refresh.mutationOptions();
-
-export const logoutMutationOptions = trpc.auth.logout.mutationOptions({
-  onSettled: () => {
-    clearAccessToken();
-    queryClient.setQueryData<MeQueryData>(trpc.auth.me.queryKey(), { user: null });
-  },
-});
+export const logout = async () => {
+  const { error } = await authClient.signOut();
+  if (error) throw new Error(error.message);
+  queryClient.setQueryData(authSessionQueryKey, { user: null });
+};

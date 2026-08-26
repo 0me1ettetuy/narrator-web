@@ -19,7 +19,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Separator } from '@/shared/components/ui/separator';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { registerSchema, type RegisterSchemaType } from '@narrator/schema';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -37,12 +37,14 @@ export function RegisterPage() {
     },
   });
   const navigate = useNavigate();
+  const router = useRouter();
   const register = useRegister();
 
   const onSubmit = async (data: RegisterFormType) => {
     form.clearErrors('root');
     try {
       await register.mutateAsync({ email: data.email, password: data.password });
+      await router.invalidate();
       toast('Registration successful!', {
         position: 'bottom-center',
         description: `You registered as ${data.email}`,
@@ -124,8 +126,8 @@ export function RegisterPage() {
                 )}
               />
               {form.formState.errors.root && (
-                <Field>
-                  <FieldError errors={[form.formState.errors.root.messages]} />
+                <Field data-invalid>
+                  <FieldError>{form.formState.errors.root.message}</FieldError>
                 </Field>
               )}
             </FieldGroup>

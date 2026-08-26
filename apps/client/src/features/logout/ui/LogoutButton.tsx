@@ -1,11 +1,12 @@
 import { useLogout } from '@/shared/auth/hooks/auth-hooks';
 import { Button } from '@/shared/components/ui/button';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 export function LogoutButton() {
   const logout = useLogout();
   const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <Button
@@ -15,9 +16,14 @@ export function LogoutButton() {
       onClick={async () => {
         try {
           await logout.mutateAsync();
-        } finally {
+          await router.invalidate();
           await navigate({ to: '/login' });
           toast('Log out successful!', {
+            position: 'bottom-center',
+          });
+        } catch (error) {
+          toast('Log out failed', {
+            description: error instanceof Error ? error.message : 'Please try again.',
             position: 'bottom-center',
           });
         }

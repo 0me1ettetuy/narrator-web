@@ -17,7 +17,7 @@ export function Header() {
           <Button size="lg" variant="link" asChild>
             <Link to="/login">Login</Link>
           </Button>
-          <Button size="lg" variant="link">
+          <Button size="lg" variant="link" asChild>
             <Link to="/register">Register</Link>
           </Button>
         </div>

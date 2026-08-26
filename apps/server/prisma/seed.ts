@@ -1,17 +1,23 @@
 import 'dotenv/config';
 import { prisma } from '../src/db/prisma.ts';
+import { auth } from '../src/utils/auth.ts';
 
 const devUser = {
   email: 'dev@example.com',
-  passwordHash: '$2b$12$8dhh/l0nWcrt9djhcwRNMOQhTuhADzLd1FohFf4qCy.XY8O13/xcS',
+  password: 'password123',
+  name: 'Dev User',
 };
 
 async function main() {
-  await prisma.user.upsert({
+  const existingUser = await prisma.user.findUnique({
     where: { email: devUser.email },
-    update: { passwordHash: devUser.passwordHash },
-    create: devUser,
   });
+
+  if (!existingUser) {
+    await auth.api.signUpEmail({
+      body: devUser,
+    });
+  }
 
   console.log(`Seeded dev user: ${devUser.email}`);
 }
